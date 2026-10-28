@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/logo-512.png" alt="Decision Coach logo" width="160"></p>
+
 # Decision Coach
 
 A Claude skill that helps people make better decisions using Naval Ravikant's principles and four mental models.
@@ -6,7 +8,7 @@ When someone asks for advice or feels stuck ("should I...", "I can't decide", "I
 
 ## How it works
 
-1. **Understand the decision**: asks a few focused questions about the options, goal, stakes, reversibility, timeline, and the people involved.
+1. **Understand the decision**: for small decisions, gives a lean right away and asks one or two questions; for big ones, asks up to three focused questions first. It also puts a price on each option and looks for a hidden third option.
 2. **Clear the lens**: spots sunk costs, identity traps, and fear. ("For important decisions, discard memory and identity, and focus on the problem.")
 3. **Pick the right models**, always at least two:
    - **Compound Interest**: long-term paths, career, money, habits
@@ -31,6 +33,7 @@ naval-decision-coach/
     principal-agent.md
     naval-principles.md
 naval-decision-coach.skill          packaged version for upload
+assets/                             logo (SVG, 512 px PNG, 512 mm PDF)
 ```
 
 ## Installation
