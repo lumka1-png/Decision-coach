@@ -55,7 +55,15 @@ h1.big{font-size:104px;font-weight:800;letter-spacing:-2px}
 .card .n{font-size:20px;font-weight:700;color:var(--gold);letter-spacing:2px}
 .card h3{font-size:34px;font-weight:800;margin:14px 0 14px;line-height:1.15}
 .card p{font-size:25px;color:var(--muted);line-height:1.4}
+.mtitle{font-size:64px;font-weight:800;letter-spacing:-1px}
+.mcards .card{min-height:380px;display:flex;flex-direction:column}
+.card .best{font-size:25px;font-weight:700;color:var(--gold2);margin-bottom:10px;line-height:1.3}
+.card .q{font-size:23px;color:var(--text);font-style:italic;margin-top:auto;border-top:1px solid var(--line);padding-top:16px;line-height:1.4}
+.cover{font-size:28px;color:var(--muted);margin-top:48px;line-height:1.7}
+.cover b{color:var(--text);font-size:38px;font-weight:800}
 .rules{display:flex;gap:18px;margin-top:46px;flex-wrap:wrap;justify-content:center}
+.rules.big{gap:24px;margin-top:60px;max-width:1500px}
+.rules.big .rule{font-size:36px;padding:22px 38px}
 .rule{font-size:26px;padding:14px 26px;border-radius:999px;border:1px solid rgba(242,181,68,.4);color:var(--gold2)}
 .url{font-size:36px;font-weight:600;margin-top:40px;color:var(--text);background:var(--panel);border:1px solid var(--line);padding:16px 32px;border-radius:16px}
 .disc{font-size:24px;color:var(--muted);margin-top:34px}
@@ -68,14 +76,14 @@ const clamp=x=>Math.max(0,Math.min(1,x));
 const ease=x=>{x=clamp(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
 const outBack=x=>{x=clamp(x);const c=1.4;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
 
-const D1=10.5, L1=24, D2=D1+L1, L2=38, R0=D2+L2, RL=8, O0=R0+RL, OL=6.5;
+const M0=10.5, ML=14, D1=M0+ML, L1=24, D2=D1+L1, L2=38, D3=D2+L2, L3=26, R0=D3+L3, RL=6.5, O0=R0+RL, OL=6.5;
 window.DURATION=O0+OL;
 
 const scenes=[
- {id:'intro',s:0,e:5.5},{id:'hook',s:5.5,e:D1},{id:'demo1',s:D1,e:D2},{id:'demo2',s:D2,e:R0},{id:'recap',s:R0,e:O0},{id:'outro',s:O0,e:O0+OL+1}
+ {id:'intro',s:0,e:5.5},{id:'hook',s:5.5,e:M0},{id:'models',s:M0,e:D1},{id:'demo1',s:D1,e:D2},{id:'demo2',s:D2,e:D3},{id:'demo3',s:D3,e:R0},{id:'recap',s:R0,e:O0},{id:'outro',s:O0,e:O0+OL+1}
 ];
 
-const demo1={pill:'Example 1 · A small decision',msgs:[
+const demo1={pill:'Example 1 of 3 · A small decision',msgs:[
  {k:'u',t:1.0,text:"Should I go to a dinner event tomorrow? The seat is $20, and I'd have to cancel two lessons worth $100."},
  {k:'think',t:4.0,t1:5.0},
  {k:'c',t:5.1,av:1,html:"<b>Small decision, easy to undo.</b> Here's my lean right away."},
@@ -93,7 +101,7 @@ const demo1={pill:'Example 1 · A small decision',msgs:[
  {t:18.3,h:'One next step',p:'Something concrete to do today.'},
 ]};
 
-const demo2={pill:'Example 2 · A big decision',msgs:[
+const demo2={pill:'Example 2 of 3 · A big decision',msgs:[
  {k:'u',t:0.8,text:"Should I quit my job to start my own business?"},
  {k:'think',t:2.4,t1:3.2},
  {k:'c',t:3.4,av:1,html:"<b>Big and hard to undo.</b> Three questions first:<ol><li>Have paying customers tested your idea?</li><li>How many months could you live on zero income?</li><li>Could you get a similar job back within a year?</li></ol>"},
@@ -117,6 +125,24 @@ const demo2={pill:'Example 2 · A big decision',msgs:[
  {t:26.6,h:'Avoidance rules',p:'Concrete rules against the failure found earlier.'},
  {t:29.6,h:'One next step',p:'Something concrete to do this week.'},
  {t:32.2,h:'Skin in the game',p:'The coach bears no consequences. You own the decision.'},
+]};
+
+const demo3={pill:'Example 3 of 3 · Advice you are unsure about',msgs:[
+ {k:'u',t:0.8,text:"My bank advisor says I should move my $20,000 savings into a new investment fund. There's a 5% upfront fee. Should I?"},
+ {k:'think',t:4.3,t1:5.1},
+ {k:'c',t:5.3,av:1,html:"<b>Medium stakes, and someone is advising you.</b> Let's check the incentives first."},
+ {k:'c',t:7.8,html:"<span class=lbl>Principal-Agent</span>What happens to the advisor if this goes badly? If they earn a commission on the sale, they're paid for the transaction, not for your returns."},
+ {k:'c',t:11.0,html:"<span class=lbl>Put a price on it</span>5% of $20,000 = <b class=gold>$1,000</b> gone on day one. A low-cost index fund would cost about $40 a year."},
+ {k:'c',t:14.0,html:"<span class=lbl>Compound interest</span>Fees compound too. You lose the $1,000 and everything it would have grown into."},
+ {k:'c',t:16.8,html:"<div class=lean><b>My lean:</b> No, not as offered. If you can't explain why it beats a low-cost fund, the answer is no.<br><span class=muted>Confidence: high</span></div>"},
+ {k:'c',t:19.6,html:"<span class=lbl>Next step</span>Ask in writing for the total fees and how the advisor is paid. Then get a second opinion from a fee-only advisor."},
+],notes:[
+ {t:5.3,h:'Size the decision',p:'Medium stakes: lead with a lean, check incentives first.'},
+ {t:7.8,h:'Principal-Agent',p:"What happens to the advisor if they're wrong?"},
+ {t:11.0,h:'Put a price on it',p:'Turn a percentage into real money.'},
+ {t:14.0,h:'Compound Interest',p:'Fees compound downward, just as returns compound up.'},
+ {t:16.8,h:"Naval's tie-breaker",p:"If you can't decide, the answer is no."},
+ {t:19.6,h:'One next step',p:'Close the information gap, then ask someone paid differently.'},
 ]};
 
 const stage=document.getElementById('stage');
@@ -143,14 +169,18 @@ function buildDemo(id,d){
  d.notes.forEach(n=>{const row=document.createElement('div');row.className='row';row.innerHTML=`<div class="note"><h3>${n.h}</h3><p>${n.p}</p></div>`;nc.appendChild(row);n.row=row;n.note=row.firstChild});
  d.scene=s;d.content=content;d.nc=nc;d.vp=s.querySelector('.viewport');d.nv=s.querySelector('.nview');
 }
-buildDemo('demo1',demo1);buildDemo('demo2',demo2);
+// models overview
+stage.appendChild(el(`<div class="scene center" id="models"><div class="mtitle">Four models. <span class="gold">One for each kind of decision.</span></div><div class="cards mcards">
+<div class="card"><div class="n">01</div><h3>Compound Interest</h3><div class="best">Best for long-term choices</div><p>Careers, skills, money, habits, relationships</p><div class="q">"Does today's work make tomorrow's easier?"</div></div>
+<div class="card"><div class="n">02</div><h3>Inversion</h3><div class="best">Best for risky or scary moves</div><p>Big bets, plans, launches, feeling stuck</p><div class="q">"What would guarantee failure?"</div></div>
+<div class="card"><div class="n">03</div><h3>Game Theory &amp; Evolution</h3><div class="best">Best for other people and the unknown</div><p>Negotiations, partners, conflict, uncertain futures</p><div class="q">"Is this a repeated game? Can I test it small?"</div></div>
+<div class="card"><div class="n">04</div><h3>Principal-Agent</h3><div class="best">Best for advice and incentives</div><p>Advisors, salespeople, hiring, delegating</p><div class="q">"What happens to them if they're wrong?"</div></div></div>
+<div class="cover" id="mcover">Long-term choices · Risky moves · Other people and the unknown · Advice and incentives<br><b>Together, they cover every kind of decision you face.</b></div></div>`));
 
-stage.appendChild(el(`<div class="scene center" id="recap"><div class="rtitle">Four models. <span class="gold">Naval's rules.</span></div><div class="cards">
-<div class="card"><div class="n">01</div><h3>Compound Interest</h3><p>Does today's work make tomorrow's work easier?</p></div>
-<div class="card"><div class="n">02</div><h3>Inversion</h3><p>What would guarantee failure? Remove it.</p></div>
-<div class="card"><div class="n">03</div><h3>Game Theory &amp; Evolution</h3><p>Is this a repeated game? Can I test it small?</p></div>
-<div class="card"><div class="n">04</div><h3>Principal-Agent</h3><p>What happens to the advisor if they're wrong?</p></div></div>
-<div class="rules"><div class="rule">If you can't decide, the answer is no</div><div class="rule">Run uphill</div><div class="rule">Long-term games with long-term people</div><div class="rule">Never risk ruin</div></div></div>`));
+buildDemo('demo1',demo1);buildDemo('demo2',demo2);buildDemo('demo3',demo3);
+
+stage.appendChild(el(`<div class="scene center" id="recap"><div class="rtitle">When it's close: <span class="gold">Naval's tie-breakers</span></div>
+<div class="rules big"><div class="rule">If you can't decide, the answer is no</div><div class="rule">Run uphill</div><div class="rule">Long-term games with long-term people</div><div class="rule">Never risk ruin</div></div></div>`));
 
 stage.appendChild(el(`<div class="scene center" id="outro"><div id="ologo" style="width:220px;height:220px">${LOGO('o')}</div><h1 class="big" style="margin-top:36px;font-size:88px">Decision Coach</h1><div class="sub">Clearer thinking. A clear lean. One next step.</div><div class="url">github.com/lumka1-png/decision-coach</div><div class="disc">A thinking partner, not a substitute for professional advice.</div></div>`));
 
@@ -193,8 +223,10 @@ window.__render=function(t){
  if(t<6){const lg=$('ilogo');lg.style.transform=`scale(${0.85+0.15*outBack(t/0.9)})`;lg.style.opacity=ease(t/0.4);drawLogo(lg,(t-0.2)/1.8);show($('ititle'),ease((t-1.3)/0.6));show($('isub'),ease((t-1.9)/0.6))}
  if(t>=5&&t<11){const r=t-5.5;show($('hq'),ease(r/0.5));show($('c1'),ease((r-0.8)/0.4),16);show($('c2'),ease((r-1.4)/0.4),16);show($('c3'),ease((r-2.0)/0.4),16);show($('hl'),ease((r-2.9)/0.5))}
  if(t>=D1-0.1&&t<D2+0.1)renderDemo(demo1,t-D1);
- if(t>=D2-0.1&&t<R0+0.1)renderDemo(demo2,t-D2);
- if(t>=R0-0.1){const r=t-R0;document.querySelectorAll('#recap .card').forEach((c,i)=>show(c,ease((r-0.6-i*0.45)/0.45),30));document.querySelectorAll('#recap .rule').forEach((c,i)=>show(c,ease((r-3.0-i*0.35)/0.4),14));show(document.querySelector('#recap .rtitle'),ease(r/0.5))}
+ if(t>=M0-0.1&&t<D1+0.1){const r=t-M0;show(document.querySelector('#models .mtitle'),ease(r/0.5));document.querySelectorAll('#models .card').forEach((c,i)=>show(c,ease((r-1.0-i*1.3)/0.5),30));show($('mcover'),ease((r-7.0)/0.6),18)}
+ if(t>=D2-0.1&&t<D3+0.1)renderDemo(demo2,t-D2);
+ if(t>=D3-0.1&&t<R0+0.1)renderDemo(demo3,t-D3);
+ if(t>=R0-0.1){const r=t-R0;show(document.querySelector('#recap .rtitle'),ease(r/0.5));document.querySelectorAll('#recap .rule').forEach((c,i)=>show(c,ease((r-0.8-i*0.45)/0.45),18))}
  if(t>=O0-0.1){const r=t-O0;const lg=$('ologo');lg.style.opacity=1;drawLogo(lg,r/1.6);document.querySelectorAll('#outro .big,#outro .sub,#outro .url,#outro .disc').forEach((e,i)=>show(e,ease((r-0.9-i*0.4)/0.5),18))}
 };
 window.__render(0);
