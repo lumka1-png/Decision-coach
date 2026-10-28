@@ -4,9 +4,10 @@ Calm and optimistic: D major, 76 BPM, I-V-vi-IV progression with a warm pad,
 an electric-piano arpeggio, soft bass and light percussion. Layers enter with
 the video's sections and the track fades out at the end.
 
-Usage: python3 music.py OUT.wav DURATION_SECONDS
+Usage: python3 music.py OUT.wav DURATION_SECONDS [--bpm N] [--arp-in S] [--bass-in S]
+       [--perc-in S] [--perc-out S] [--peak-db DB] [--fade-in S] [--claps]
 """
-import sys
+import argparse
 import wave
 
 import numpy as np
@@ -18,6 +19,7 @@ BAR = 4 * BEAT
 
 # Section start times in the video (seconds).
 ARP_IN, BASS_IN, PERC_IN, PERC_OUT = 5.5, 10.5, 24.5, 112.5
+PEAK_DB, FADE_IN, CLAPS = -10.0, 2.0, False
 
 # I - V - vi - IV in D major, as MIDI notes (root, third, fifth).
 CHORDS = [(50, 54, 57), (57, 61, 64), (59, 62, 66), (55, 59, 62)]
@@ -92,6 +94,13 @@ def shaker(rng):
     return noise * np.exp(-t / 0.03)
 
 
+def clap(rng):
+    n = int(0.18 * SR)
+    t = np.arange(n) / SR
+    noise = np.diff(rng.standard_normal(n), prepend=0)
+    return noise * (np.exp(-t / 0.05) + 0.5 * np.exp(-((t - 0.012) ** 2) / 1e-5))
+
+
 def reverb(buf, rng, seconds=2.6):
     n = int(seconds * SR)
     t = np.arange(n) / SR
@@ -140,6 +149,8 @@ def main(path, duration):
             if PERC_IN <= at < PERC_OUT:
                 if beat in (0, 2):
                     add(perc, at, kick() * 0.35)
+                elif CLAPS:
+                    add(perc, at, clap(rng) * 0.06)
                 add(perc, at + BEAT / 2, shaker(rng) * 0.05, pan=0.3)
         bar += 1
 
@@ -149,11 +160,11 @@ def main(path, duration):
 
     n = mix.shape[1]
     fade = np.ones(n)
-    fi, fo = int(2.0 * SR), int(4.0 * SR)
+    fi, fo = int(FADE_IN * SR), int(min(4.0, duration / 8) * SR)
     fade[:fi] = np.linspace(0, 1, fi)
     fade[n - fo:] = np.linspace(1, 0, fo)
     mix *= fade
-    mix *= 10 ** (-10 / 20) / np.max(np.abs(mix))  # quiet bed under the visuals
+    mix *= 10 ** (PEAK_DB / 20) / np.max(np.abs(mix))
 
     pcm = (mix.T * 32767).astype(np.int16)
     with wave.open(path, "wb") as w:
@@ -164,4 +175,19 @@ def main(path, duration):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], float(sys.argv[2]))
+    ap = argparse.ArgumentParser()
+    ap.add_argument("out")
+    ap.add_argument("duration", type=float)
+    ap.add_argument("--bpm", type=float, default=BPM)
+    ap.add_argument("--arp-in", type=float, default=ARP_IN)
+    ap.add_argument("--bass-in", type=float, default=BASS_IN)
+    ap.add_argument("--perc-in", type=float, default=PERC_IN)
+    ap.add_argument("--perc-out", type=float, default=PERC_OUT)
+    ap.add_argument("--peak-db", type=float, default=PEAK_DB, help="peak level; -10 is a quiet bed")
+    ap.add_argument("--fade-in", type=float, default=FADE_IN)
+    ap.add_argument("--claps", action="store_true", help="add claps on beats 2 and 4")
+    a = ap.parse_args()
+    BPM, BEAT, BAR = a.bpm, 60 / a.bpm, 240 / a.bpm
+    ARP_IN, BASS_IN, PERC_IN, PERC_OUT = a.arp_in, a.bass_in, a.perc_in, a.perc_out
+    PEAK_DB, FADE_IN, CLAPS = a.peak_db, a.fade_in, a.claps
+    main(a.out, a.duration)

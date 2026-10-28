@@ -1,0 +1,134 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Decision Coach TikTok</title>
+<style>
+:root{--bg1:#173F5A;--bg2:#0B2233;--panel:#0F2C41;--line:rgba(255,255,255,.1);--text:#EAF1F6;--muted:#9DB3C4;--gold:#F2B544;--gold2:#FFD27A;--user:#22587B}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg2);font-family:Inter,"DejaVu Sans",sans-serif;color:var(--text)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:radial-gradient(1000px 1100px at 15% 5%,#1E5070 0%,transparent 60%),linear-gradient(160deg,var(--bg1),var(--bg2))}
+.scene{position:absolute;inset:0;opacity:0;display:none}
+/* safe area: x 60..960, y 220..1480 (TikTok UI covers the rest) */
+.safe{position:absolute;left:60px;top:220px;width:900px;height:1260px}
+.col{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.hookw{font-size:150px;font-weight:900;letter-spacing:-4px;line-height:1.02}
+.hooks{font-size:54px;color:var(--muted);margin-top:60px;line-height:1.3;font-weight:500}
+.hooks b{color:var(--gold);font-weight:800}
+.mhead{font-size:46px;font-weight:700;color:var(--gold);letter-spacing:1px}
+.mhead2{font-size:60px;font-weight:800;margin-top:8px;line-height:1.1}
+.mcard{position:absolute;left:0;top:300px;width:900px;height:760px;background:var(--panel);border:1px solid var(--line);border-radius:44px;padding:64px 60px;display:flex;flex-direction:column;opacity:0}
+.mcard .k{font-size:38px;font-weight:700;color:var(--gold)}
+.mcard h2{font-size:92px;font-weight:900;letter-spacing:-2px;line-height:1.02;margin-top:22px}
+.mcard .bl{font-size:32px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:44px}
+.mcard .best{font-size:60px;font-weight:800;color:var(--gold2);line-height:1.12;margin-top:10px}
+.mcard .q{font-size:48px;font-style:italic;line-height:1.3;margin-top:auto;padding-top:34px;border-top:2px solid var(--line)}
+.dots{position:absolute;left:0;right:0;top:1110px;display:flex;justify-content:center;gap:22px}
+.dots span{width:22px;height:22px;border-radius:50%;background:#2A4B63}
+.dots span.on{background:var(--gold)}
+.exhead{display:flex;justify-content:space-between;align-items:center}
+.exhead .t{font-size:46px;font-weight:800}
+.exhead .c{font-size:36px;font-weight:700;color:var(--gold2);border:2px solid rgba(242,181,68,.45);border-radius:999px;padding:10px 26px}
+.ex{position:absolute;left:0;top:130px;width:900px;opacity:0}
+.ub{margin-left:auto;max-width:820px;width:fit-content;background:var(--user);border-radius:40px 40px 10px 40px;padding:30px 38px;font-size:48px;line-height:1.3;font-weight:500;min-height:122px}
+.caret{display:inline-block;width:4px;height:50px;background:var(--text);vertical-align:-8px;margin-left:3px}
+.cl{display:flex;gap:24px;margin-top:44px;opacity:0}
+.av{width:72px;height:72px;flex:none}
+.av.ph{visibility:hidden}
+.ct{font-size:44px;line-height:1.3}
+.lbl{display:block;font-size:30px;font-weight:800;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
+.lean{margin-top:48px;border:4px solid var(--gold);background:rgba(242,181,68,.1);border-radius:32px;padding:32px 36px;font-size:48px;line-height:1.28;font-weight:600;opacity:0}
+.lean b{color:var(--gold2);font-weight:900}
+.gold{color:var(--gold)}
+.big1{font-size:110px;font-weight:900;letter-spacing:-3px;line-height:1.05}
+.rl{font-size:54px;font-weight:700;color:var(--gold);margin-top:80px}
+.rq{font-size:86px;font-weight:900;letter-spacing:-2px;line-height:1.08;margin-top:20px}
+.ctat{font-size:104px;font-weight:900;letter-spacing:-3px;margin-top:56px}
+.ctas{font-size:50px;color:var(--muted);margin-top:16px}
+.url{font-size:38px;font-weight:700;margin-top:60px;background:var(--panel);border:1px solid var(--line);padding:22px 34px;border-radius:24px}
+.save{font-size:50px;font-weight:800;color:var(--gold2);margin-top:60px}
+</style></head>
+<body><div id="stage"></div>
+<script>
+window.VIEW={w:1080,h:1920};
+const LOGO=(id)=>`<svg viewBox="0 0 512 512" style="width:100%;height:100%;display:block"><defs><linearGradient id="bg${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D4C6C"/><stop offset="1" stop-color="#0E2A3D"/></linearGradient><linearGradient id="g${id}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#E9A53A"/><stop offset="1" stop-color="#FFD27A"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#bg${id})" stroke="rgba(255,255,255,.08)" stroke-width="4"/><g transform="translate(-18 -8)"><path class="lp-gray" d="M256 304 L150 244" fill="none" stroke="#5F7C92" stroke-width="26" stroke-linecap="round" pathLength="1"/><circle class="lp-gdot" cx="150" cy="244" r="20" fill="#0F2C40" stroke="#5F7C92" stroke-width="10"/><path class="lp-stem" d="M256 430 L256 304" fill="none" stroke="#EAF1F6" stroke-width="28" stroke-linecap="round" pathLength="1"/><path class="lp-gold" d="M256 304 C 326 300 372 250 390 128" fill="none" stroke="url(#g${id})" stroke-width="28" stroke-linecap="round" pathLength="1"/><circle class="lp-end" cx="390" cy="118" r="30" fill="url(#g${id})"/><circle class="lp-node" cx="256" cy="304" r="20" fill="#EAF1F6"/></g></svg>`;
+
+const clamp=x=>Math.max(0,Math.min(1,x));
+const ease=x=>{x=clamp(x);return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2};
+const outBack=x=>{x=clamp(x);const c=1.6;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+
+const H0=0, M0=3.2, MC=2.1, E0=M0+4*MC, EL=6.5, R0=E0+3*EL, C0=R0+3, END=C0+4.4;
+window.DURATION=END;
+window.MUSIC_ARGS=['--bpm','112','--arp-in','0','--bass-in',String(M0),'--perc-in',String(M0),'--perc-out',String(END-2),'--peak-db','-5','--fade-in','0.2','--claps'];
+
+const scenes=[{id:'hook',s:H0,e:M0},{id:'models',s:M0,e:E0},{id:'examples',s:E0,e:R0},{id:'rule',s:R0,e:C0},{id:'cta',s:C0,e:END+1}];
+
+const models=[
+ {n:'Compound Interest',best:'Long-term choices',q:'"Does today\'s work make tomorrow\'s easier?"'},
+ {n:'Inversion',best:'Risky or scary moves',q:'"What would guarantee failure?"'},
+ {n:'Game Theory & Evolution',best:'Other people and the unknown',q:'"Is this a repeated game? Can I test it small?"'},
+ {n:'Principal-Agent',best:'Advice and incentives',q:'"What happens to them if they\'re wrong?"'},
+];
+const examples=[
+ {q:"Should I quit my job to start a business?",
+  l:[["Compound interest","A salary resets. A business you own compounds."],["Evolution","Test small first: grow side income before you jump."]],
+  lean:"Yes, but not yet. Quit when side income hits 50% of your salary."},
+ {q:"My advisor wants a 5% fee on my $20,000. Should I?",
+  l:[["Principal-Agent","First ask: how is the advisor paid?"],["Put a price on it","5% = <b class=gold>$1,000</b> gone on day one."]],
+  lean:"No, not as offered. Get a second opinion from a fee-only advisor."},
+ {q:"Should I go to a $20 dinner if I cancel $100 of lessons?",
+  l:[["Real cost","$20 + $100 = <b class=gold>$120</b>. Would you pay that in cash?"],["Hidden option","Reschedule the lessons instead."]],
+  lean:"Go only if both students can reschedule."},
+];
+
+const stage=document.getElementById('stage');
+const el=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
+const $=id=>document.getElementById(id);
+
+stage.appendChild(el(`<div class="scene" id="hook"><div class="safe col"><div id="hlogo" style="width:150px;height:150px;margin-bottom:70px">${LOGO('h')}</div>
+<div class="hookw" id="w1">Can't</div><div class="hookw" id="w2">make a</div><div class="hookw gold" id="w3">decision?</div>
+<div class="hooks" id="hs">This Claude skill thinks like<br><b>Naval Ravikant</b></div></div></div>`));
+
+stage.appendChild(el(`<div class="scene" id="models"><div class="safe"><div class="col" style="margin-top:20px"><div class="mhead">4 MENTAL MODELS</div><div class="mhead2">One for each kind of decision</div></div>
+${models.map((m,i)=>`<div class="mcard" id="mc${i}"><div class="k">${i+1} / 4</div><h2>${m.n.replace('&','&amp;')}</h2><div class="bl">Best for</div><div class="best">${m.best}</div><div class="q">${m.q}</div></div>`).join('')}
+<div class="dots">${models.map((_,i)=>`<span id="md${i}"></span>`).join('')}</div></div></div>`));
+
+stage.appendChild(el(`<div class="scene" id="examples"><div class="safe"><div class="exhead"><div class="t">Real decisions</div><div class="c" id="exc">1 / 3</div></div>
+${examples.map((e,i)=>`<div class="ex" id="ex${i}"><div class="ub"><span class="tx"></span><span class="caret"></span></div>
+${e.l.map((l,j)=>`<div class="cl"><div class="av ${j?'ph':''}">${j?'':LOGO('a'+i)}</div><div class="ct"><span class="lbl">${l[0]}</span>${l[1]}</div></div>`).join('')}
+<div class="lean"><b>My lean:</b> ${e.lean}</div></div>`).join('')}</div></div>`));
+
+stage.appendChild(el(`<div class="scene" id="rule"><div class="safe col"><div class="big1" id="r1">Still can't<br>decide?</div><div class="rl" id="r2">Naval's rule:</div><div class="rq" id="r3">If you can't decide,<br><span class="gold">the answer is no.</span></div></div></div>`));
+
+stage.appendChild(el(`<div class="scene" id="cta"><div class="safe col"><div id="clogo" style="width:260px;height:260px">${LOGO('c')}</div><div class="ctat" id="c1">Decision Coach</div><div class="ctas" id="c2">A free Claude skill</div><div class="url" id="c3">github.com/lumka1-png/decision-coach</div><div class="save" id="c4">Save this for your next big decision</div></div></div>`));
+
+function show(e,p,dy=30,sc=0){e.style.opacity=p;e.style.transform=`translateY(${(1-p)*dy}px) scale(${1-sc*(1-p)})`}
+function pop(e,x){const p=clamp(x);e.style.opacity=clamp(x*3);e.style.transform=`scale(${0.6+0.4*outBack(p)})`}
+function drawLogo(root,t){
+ const q=s=>root.querySelector(s);const a=ease(t/0.35),b=ease((t-0.3)/0.25),c=ease((t-0.45)/0.45);
+ for(const [s,v] of [['.lp-stem',a],['.lp-gray',b],['.lp-gold',c]]){q(s).style.strokeDasharray=1;q(s).style.strokeDashoffset=1-v}
+ q('.lp-gdot').style.opacity=b;q('.lp-end').style.opacity=ease((t-0.85)/0.15);q('.lp-node').style.opacity=ease((t-0.25)/0.1);
+}
+
+window.__render=function(t){
+ scenes.forEach(s=>{const e=$(s.id);const o=(s.s===0?1:ease((t-s.s)/0.2))*(1-ease((t-(s.e-0.2))/0.2));e.style.opacity=o;e.style.display=o>0.001?'block':'none'});
+ // full hook is visible on frame 1 (TikTok uses it as the cover); it settles with a short zoom
+ if(t<M0+0.3){drawLogo($('hlogo'),1);['w1','w2','w3'].forEach((id,i)=>{const e=$(id);e.style.opacity=1;e.style.transform=`scale(${1+0.12*(1-ease((t-i*0.08)/0.5))})`});show($('hs'),ease((t-0.7)/0.4))}
+ if(t>=M0-0.3&&t<E0+0.3){
+  models.forEach((m,i)=>{const s=M0+i*MC,r=t-s;const inn=ease(r/0.25),out=ease((r-(MC-0.25))/0.25);const c=$('mc'+i);
+   const last=i===models.length-1;const o=last?inn:inn*(1-out);c.style.opacity=o;c.style.transform=`translateX(${(1-inn)*140-(last?0:out*140)}px)`;
+   $('md'+i).classList.toggle('on',t>=s&&t<s+MC)});
+ }
+ if(t>=E0-0.3&&t<R0+0.3){
+  examples.forEach((e,i)=>{const s=E0+i*EL,r=t-s,ex=$('ex'+i);const last=i===examples.length-1;
+   const o=ease(r/0.2)*(last?1:1-ease((r-(EL-0.25))/0.25));ex.style.opacity=o;ex.style.transform=`translateY(${(1-ease(r/0.2))*40-(last?0:ease((r-(EL-0.25))/0.25)*60)}px)`;
+   if(r<0||r>EL)return;
+   $('exc').textContent=`${i+1} / 3`;
+   const n=Math.max(0,Math.floor((r-0.15)*50)),done=n>=e.q.length;ex.querySelector('.tx').textContent=e.q.slice(0,n);
+   ex.querySelector('.caret').style.opacity=done?0:((Math.floor(t*4)%2)?0.2:1);
+   ex.querySelectorAll('.cl').forEach((c,j)=>show(c,ease((r-1.7-j*1.2)/0.3),30));
+   const ln=ex.querySelector('.lean');const lp=(r-4.1)/0.35;ln.style.opacity=clamp(lp*2);ln.style.transform=`scale(${0.85+0.15*outBack(lp)})`;
+  });
+ }
+ if(t>=R0-0.3&&t<C0+0.3){const r=t-R0;pop($('r1'),r/0.35);show($('r2'),ease((r-0.8)/0.3));pop($('r3'),(r-1.15)/0.4)}
+ if(t>=C0-0.3){const r=t-C0;drawLogo($('clogo'),r/1.2);['c1','c2','c3','c4'].forEach((id,i)=>show($(id),ease((r-0.6-i*0.35)/0.35),26))}
+};
+window.__render(0);
+</script></body></html>
