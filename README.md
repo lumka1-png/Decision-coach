@@ -6,6 +6,8 @@ A Claude skill that helps people make better decisions using Naval Ravikant's pr
 
 When someone asks for advice or feels stuck ("should I...", "I can't decide", "I'm torn between..."), the skill walks them through the decision step by step and ends with a clear recommendation.
 
+**Demo video:** [demo/decision-coach-demo.mp4](demo/decision-coach-demo.mp4) (87 seconds)
+
 ## How it works
 
 1. **Understand the decision**: for small decisions, gives a lean right away and asks one or two questions; for big ones, asks up to three focused questions first. It also puts a price on each option and looks for a hidden third option.
